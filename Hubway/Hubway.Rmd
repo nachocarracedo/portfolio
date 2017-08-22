@@ -1,0 +1,494 @@
+---
+title: "Hubway Dataset exploration [step by step explanation]"
+author: "Ignacio Carracedo"
+date: "October 16, 2016"
+output: rmarkdown::github_document
+---
+
+#INTRODUCTION
+Hubway is a Metro-Boston bicycle sharing company that aims to offer an efficient and affordable transportation service. In 2007 the Boston Bike program was founded which led to the development of the Hubway system. Cities such as Boston, Brookline, Cambridge and Somerville all committed to bringing the new initiative to their communities. Since the program would interfere with municipal boundaries the Metropolitan Area Planning Council stepped in and selected the company <i>Motivate</i> to oversee Hubway. 
+
+Hubway keeps a record of every rider's trip. In 2012 Hubway challenged the public to use its data for visualizing half a million of Hubway rides. While the challenge has already ended, the data is still available for use. In fact, Hubway has actually updated its data set to contain rides from the launch of the service in 2011, until the end of 2013.
+
+#OBJECTIVES
+Hubway's records provide information about the rides and the riders. We can find the start and end time for the rides, the stations involved and also some demographic data on riders such as age or gender. Not all riders are registered in the service, some of them are just casual users of Hubway's bikes (meaning most of the data that is usually associated with a registered user is not available).
+
+My goals for this paper are to understand how people use the service, and also how registered users differ from casual ones. These are some of the questions I'm looking to answer:
+
+<ul>
+<li> Are men or women more willing to use Hubway? </li>
+<li> Does age affect trip duration? </li>
+<li> Are most Hubway rides done by registered users or just casual users? </li>
+<li> Does the daily frequency of trips differ between registered and casual users? </li>
+<li> What are peak usage times in a day for the service? </li>
+</ul>
+
+Furthermore, we look to understand how stations are used. Based on maps, we want to know:
+<ul>
+<li> What are stations with more incoming than outcoming flow of riders? </li>
+<li> Where are the most and least used stations? </li>
+</ul>
+
+I'll show the code and explain each step of the process for future reference.
+
+#VARIABLE DESCRIPTIONS
+Hubway provides two data sets freely available for download from the website http://hubwaydatachallenge.org:
+<ul>
+<li> `hubway_trips.csv`: information regarding rides </li>
+<li> `hubway_stations.csv`: information of every station in the Boston area </li>
+</ul>
+
+<b>TRIPS:</b> The following table describes the details of the variables in the `hubway_trips.csv` data set:
+
+Variable Name | Variable Description | Unit
+-----------------|-------------------------|--------------------------
+duration | duration of the trip | seconds
+start_day | start day and time | data and time 
+end_date | end day and time | data and time
+strt_statn | id of the start station | number
+end_statn | id of the end station | number
+bike_nr | id of the bike used | number
+subs_type | type of user (registered or casual) | factor
+zip_code | zip_code for registered users | string
+birth_date | birth year of registered users | year
+gender | gender of users | factor
+
+<b>STATIONS:</b> The following table describes the details of the variables in the `hubway_stations.csv` data set:
+
+Variable Name | Variable Description | Unit
+-----------------|-------------------------|--------------------------
+terminal | id for the station | string
+station | name of the station | string
+municipal | city of the station (Boston, Somerville, Cambridge, etc.) | string
+lat | latitude of the station | number
+lng | longitude of the station | number
+status | if the station exists or has been removed | factor
+
+#DATASET PREPARATION
+
+To prepare the data before diving into analysis we do the following:
+
+<ol>
+<li> Read both datasets and initialize libraries to be used. </li>
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+#load libraries
+library(magrittr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(scales)
+library(rgeos)
+library(maptools)
+library(ggmap)
+
+# load datasets
+hw.stations = read.csv("./data/hubway_stations.csv")
+hw.trips = read.csv("./data/hubway_trips.csv")
+```
+
+<li> Check for and remove missing values: </li>
+```{r, message=FALSE, warning=FALSE}
+sapply(hw.stations, function(x) sum(is.na(x))) # check for missing values
+sapply(hw.trips, function(x) sum(is.na(x))) # check for missing values
+
+```
+
+<li> We find that there are 49 negative values for the `duration` variable. As such, we remove these entries: </li>
+```{r, message=FALSE, warning=FALSE}
+hw.trips %>% filter(., duration<0) %>% nrow() # check how many rows will be removed
+hw.trips %>% filter(., duration > 0) -> hw.trips #remove
+```
+
+<li>We want to just take into account trips that last one day or less. Given the expanse of the Hubway network, trips that are longer are probably faulty entries or entries for users that did not return the bike to a Hubway rack. Therefore, we remove all trips that last more than 24 hours: </li>
+```{r, message=FALSE, warning=FALSE}
+hw.trips$duration %>% quantile(c(.999)) #to make sure we are not removing a lot we check 99.9 quantile
+hw.trips %>% filter(., duration < 86400) -> hw.trips #remove
+```
+
+<li> We move on to deleting resets: a bike's timer gets reset when it is taken out and put back into the same station in less than 5 minutes. </li>
+```{r, message=FALSE, warning=FALSE}
+# Delete resets: Threshold of 5 min (300 seconds))
+hw.trips %>% filter(., strt_statn==end_statn & duration<300) %>% nrow() # check
+hw.trips %>% filter(., !(strt_statn==end_statn & duration<300)) -> hw.trips #remove
+```
+
+<li> Due to the format of zip codes we remove the preceding `'` sign: </li>
+```{r, message=FALSE, warning=FALSE}
+# fix zipcode. Remove prefix and turn into number
+hw.trips$zip_code %>% sapply(., function(x) {substring(x, 1)}) %>% as.factor() -> hw.trips$zip_code
+
+```
+
+<li> Create factor levels for stations and remove observations where the start or the end station is `null` or `na`: </li>
+```{r, message=FALSE, warning=FALSE}
+# create factors for stations
+hw.trips$strt_statn <- as.factor(hw.trips$strt_statn)
+hw.trips$end_statn <- as.factor(hw.trips$end_statn)
+# check for missing values - remove rows with start station or end station null
+sapply(hw.trips, function(x) sum(is.na(x))) 
+hw.trips %>% filter(., !is.na(strt_statn) & !is.na(end_statn)) -> hw.trips
+```
+
+<li> Calculate age of Hubway users and save the result in a new variable named `age`: </li>
+```{r, message=FALSE, warning=FALSE}
+hw.trips %>% mutate(. , age = 2012 - birth_date ) -> hw.trips
+```
+
+<li> Create columns for time, month, year and day of the week separately: </li>
+```{r, message=FALSE, warning=FALSE}
+# Extract time, month, year, and day of the week from dates 
+#time (hour, minute)
+hw.trips$end_date %>% as.POSIXct(.,format="%m/%d/%Y %H:%M:%S") %>%  strftime(., "%H:%M") ->  hw.trips$end_date_time
+hw.trips$start_date %>% as.POSIXct(.,format="%m/%d/%Y %H:%M:%S") %>%  strftime(., "%H:%M") -> hw.trips$start_date_time
+#dates
+hw.trips$start_date %>% as.Date(. , format = "%m/%d/%Y") -> hw.trips$start_date
+hw.trips$end_date %>% as.Date(. , format = "%m/%d/%Y") -> hw.trips$end_date
+#month, year, weekdays
+hw.trips$start_date %>% strftime(., "%m") %>% as.factor() -> hw.trips$start_date_month
+hw.trips$start_date %>% strftime(., "%y") %>% as.factor() -> hw.trips$start_date_year
+hw.trips$start_date %>% weekdays(.) %>% as.factor() -> hw.trips$start_date_weekday
+hw.trips$end_date %>% strftime(., "%m") %>% as.factor() -> hw.trips$end_date_month
+hw.trips$end_date %>% strftime(., "%y") %>% as.factor() -> hw.trips$end_date_year
+hw.trips$end_date %>% weekdays(.) %>% as.factor() -> hw.trips$end_date_weekday
+
+```
+
+<li> Save two new data sets: </li>
+ * `hubway_stations_clean.csv`
+ * `hubway_trips_clean.csv`
+ 
+```{r, message=FALSE, warning=FALSE, echo=FALSE}	
+# save
+#write.csv(file=("./data/hubway_stations_clean.csv"), x=hw.stations, row.names = FALSE)
+#write.csv(file=("./data/hubway_trips_clean.csv"), x=hw.trips, row.names = FALSE)
+```	
+</ol>	
+
+#VARIABLE SUMMARIES
+
+Now that we have two clean datasets to work with we move on to the analysis. We thus begin by importing the clean data and quickly inspecting it:
+
+```{r, message=FALSE, warning=FALSE}	
+# load
+hw.stations = read.csv("./data/hubway_stations_clean.csv")
+hw.trips = read.csv("./data/hubway_trips_clean.csv") 
+#checks
+head(hw.stations)
+str(hw.stations)
+head(hw.trips)
+str(hw.trips)
+```	
+
+Since we want to analyze information on registered and casual users we first compare the number of trips done by each category of users.
+```{r, message=FALSE, warning=FALSE}	
+# Registered/unRegistered trips (bar) 
+ggplot(hw.trips, aes(x=subsc_type, fill=subsc_type)) +
+  geom_bar(color=I("black"), size=0,alpha = 0.7) +
+  ylab("Count") +
+  xlab("Subscriber type") +
+  ggtitle("Total trips by user status")  +
+  guides(fill=FALSE)+ #removes legend
+  scale_y_continuous(labels = comma)
+```	
+
+Registered users have more than double the number of trips done by casual users. This matches our intuitive hypothesis as we would expect registered users to exhibit higher levels of engagement with the service.
+
+we check the duration of all trips, and by type of user.
+```{r, message=FALSE, warning=FALSE}
+# duration (hist)
+ggplot(hw.trips, aes(x=duration)) +
+  geom_histogram(bins=300, color=I("darkblue"), fill=I("darkblue"), size=0,alpha = 0.5) +
+  coord_cartesian(xlim = c(0,6500)) +
+  xlab("Trip duration (seconds)") +
+  ylab("Count") +
+  ggtitle("Trip duration in seconds (5 min = 1 bin)") + 
+  scale_y_continuous(labels = comma)
+
+# duration per Registered/ unrRegistered
+ggplot(hw.trips, aes(x=duration,fill=subsc_type)) +
+  geom_histogram(bins=300, color="black", size=0, alpha = 0.5, position = 'identity') +
+  coord_cartesian(xlim = c(0,6500)) + 
+  ggtitle("Trip duration by user status (5 min = 1 bin)") +
+  xlab("Duration (Seconds)") +
+  ylab("Count") + 
+  scale_y_continuous(labels = comma)
+```	
+
+It is interesting to note that registered users usually spend 10 to 15 minutes per ride. Casual users tend to spend more time, mainly between 15 to 25 minutes. This could be due to the fact that registered users have more frequent fixed trips that they incorporate into their commutes while casual users will probably use the service for leisure purposes.
+
+If we just focus on registered users, we are able to analyze demographic information such as gender and age.
+
+Based on the following visualization, it is noticeable that men use the service almost three times more than women do.
+```{r, message=FALSE, warning=FALSE}
+# gender of register users
+hw.trips %>% filter(., subsc_type=='Registered') -> hw.trips.register
+
+ggplot(hw.trips.register, aes(x=gender, fill=gender)) +
+  geom_bar(color=I("black"), size=0,alpha = 0.9) +
+  ylab("Count") +
+  ggtitle("Total registered trips by gender") +
+  guides(fill=FALSE) + #removes legend
+  scale_y_continuous(labels = comma)
+```	
+
+When we look at the duration of rides by age (taking average), we can note that older people's trips are usually longer. But this information would be incomplete if we don't show the standard error for the mean. As shown below the se is very high for older people:
+```{r, message=FALSE, warning=FALSE}
+# duration by age (only Registered users) # remove ages with less than 20 trips
+hw.trips.register %>% group_by(age) %>% summarise(avg.duration=mean(duration), sd.duration=sd(duration), count=n()) %>% filter(., count > 20) -> age.avg.duration
+
+ggplot(age.avg.duration, aes(x= age, y=avg.duration)) +
+  geom_bar(stat="identity",color=I("darkblue"), fill=I("darkblue"), size=0,alpha = 0.5) +
+  geom_errorbar(aes(ymin=avg.duration-sd.duration, ymax=avg.duration+sd.duration),
+                    width=.2,                    # Width of the error bars
+                    position=position_dodge(.9)) +
+  coord_cartesian(xlim = c(15,80)) +
+  xlab("Age") +
+  ylab("Avg duration (seconds)") +
+  ggtitle("Trip duration by age of registered users")
+ 
+```
+
+Now, we mix gender and age in a density plot (smoothed version of the histogram). Here we have the distribution of age by gender. 
+```{r, message=FALSE, warning=FALSE}
+
+# Age/sex of Registered users. Using desity plot to compare distributions
+ggplot(hw.trips.register, aes(x=age, fill=gender)) +
+  geom_density(kernel = "gaussian",color=I("black"), size=0, alpha=0.5,adjust=1.5) +
+  ylab("Probability") +
+  ggtitle("Kernel density estimate of total registered trips by age/gender")
+```
+
+Females in their 20' to 30's are more likely to use the system than males, but males tend to ride more when they grow older.
+
+Let's take a look at the distribution of duration of rides among the two sexes:
+```{r, message=FALSE, warning=FALSE}
+# duration  of Registered by gender
+ggplot(hw.trips.register, aes(x=duration, fill=gender)) +
+  geom_density(kernel = "gaussian",color=I("black"), size=0, alpha=0.5,adjust=1.5) +
+  ggtitle("Kernel density estimate of trip duration by gender") +
+  xlim(0, 3000) +
+  xlab("Trip Duration (seconds)") +
+  ylab("Probability") 
+```
+
+
+We notice that male users tend to have shorter rides than female users.
+
+#VARIABLE CONNECTIONS
+
+Now that we know more about the duration of rides,the age of Hubway users, their gender, and whether or not they are registered or casual users, we can dive into deeper analysis, specifically looking at how these variables are connected or related.
+
+The next graphic shows the number of trips by month and user status. 
+```{r, message=FALSE, warning=FALSE}
+# number of trips - month (casual and Registered)
+# aggregate month
+hw.trips %>% group_by(start_date_month, subsc_type) %>% summarise(count=n()) %>% as.data.frame()-> trips.m
+# add winter brakes (for plotting)
+trips.m[nrow(trips.m)+1,] <- c(12,"Registered",0)
+trips.m[nrow(trips.m)+1,] <- c(12,"Casual",0)
+trips.m[nrow(trips.m)+1,] <- c(1,"Registered",0)
+trips.m[nrow(trips.m)+1,] <- c(1,"Casual",0)
+trips.m[nrow(trips.m)+1,] <- c(2,"Registered",0)
+trips.m[nrow(trips.m)+1,] <- c(2,"Casual",0)
+# set month names
+trips.m$start_date_month <- plyr::mapvalues(trips.m$start_date_month,
+                     from = c(1,2,3,4,5,6,7,8,9,10,11,12),
+                     to = c(".1.Jan", ".2.Feb", ".3.Mar", ".4.Apr", ".5.May",".6.Jun",".7.Jul",".8.Aug",".9.Sep","10.Oct","11.Nov","12.Dec"))  
+trips.m$count %>% as.numeric() -> trips.m$count
+# sort
+trips.m %>% arrange(., start_date_month, count)  -> trips.m
+# plot
+ggplot(trips.m, aes(x=start_date_month, y=count, fill=subsc_type)) +
+  geom_bar(stat="identity",color=I("black"), size=0,alpha = 0.7) +
+  xlab("Month") +
+  ylab("Count") +
+  ggtitle("Number of trips by month and user status") + 
+  scale_y_continuous(labels = comma)
+```
+Both the number of registered users' trips and casual users' trips are higher during Fall. The proportion between the types of users is usually stable. However, during August, the proportion of casual users' trips is higher than in the rest of the month.
+
+When we perform the same analysis but on a daily basis instead of monthly basis, we note that during weekends casual user trips are as high as or even higher than registered users' trips.
+```{r, message=FALSE, warning=FALSE}
+# number of trips - weekdays (2 lines - casual and registered)
+# aggregate month
+hw.trips %>% group_by(start_date_weekday, subsc_type) %>% summarise(count=n()) %>% as.data.frame()-> trips.d
+# set month names
+trips.d$start_date_weekday <- plyr::mapvalues(trips.d$start_date_weekday,
+                                            from = c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"),
+                                            to = c("1.Monday","2.Tuesday","3.Wednesday","4.Thursday","5.Friday","6.Saturday","7.Sunday"))  
+trips.d$count %>% as.numeric() -> trips.d$count
+trips.d$start_date_weekday %>% as.character() -> trips.d$start_date_weekday
+# sort
+trips.d %>% arrange(., start_date_weekday, subsc_type)  -> trips.d
+# plot
+ggplot(trips.d, aes(x=start_date_weekday, y=count, fill=subsc_type)) +
+  geom_bar(stat="identity",color=I("black"), size=0,alpha = 0.5) +
+  xlab("Day of the Week") +
+  ylab("Count") +
+  ggtitle("Number of trips by weekday and user status")
+```
+
+If we now break down the analysis by hour, we see casual users' trips tend to increase during the afternoon until 7 pm. 
+```{r, message=FALSE, warning=FALSE}
+# time of trips by hour
+# aggregate hour
+hw.trips$start_date_time %>% substring(., 1, 2) -> hw.trips$start_date_hour
+hw.trips %>% group_by(start_date_hour, subsc_type) %>% summarise(count=n()) %>% as.data.frame()-> trips.time
+trips.time$start_date_hour %>% sapply(., function(x) {paste(x, "h", sep="")}) %>% as.character() -> trips.time$start_date_hour
+# sort
+trips.time %>% arrange(., start_date_hour)  -> trips.time
+# plot
+ggplot(trips.time, aes(x=start_date_hour, y=count, fill=subsc_type)) +
+  geom_bar(stat="identity",color=I("black"), size=0,alpha = 0.5,width=0.8) +
+  xlab("Hour") +
+  ylab("Count") +
+  ggtitle("Number of trips per hour and subscription type")
+```
+
+Understandably not all stations will experience the same level of traffic. Based on the following graph, <i>South Station is</i>, by far, the station with the most trips. We note that there is an even number of incoming and outgoing trips. <i>Boston Medical Center</i> on Mass Ave. is the second station by number of trips, followed by <i>Central Square</i> station.
+[NOTE: Only showing top 20 stations by traffic for clarity]
+```{r, message=FALSE, warning=FALSE}
+# incoming/outgoing trips per station
+# aggregate by station and sort by count
+hw.trips %>% group_by(strt_statn) %>% summarise(outgoing_trips=n()) %>% 
+  as.data.frame() %>% arrange(., desc(outgoing_trips)) %>% rename(id = strt_statn) -> trips.o
+hw.trips %>% group_by(end_statn) %>% summarise(incoming_trips=n()) %>%
+  as.data.frame() %>% arrange(., desc(incoming_trips)) %>% rename(id = end_statn) -> trips.i
+# merge by station and add station info from hw.stations
+full_join(trips.o, trips.i, by = "id") -> trips.station
+left_join(trips.station, hw.stations, by = "id") %>% select(station, outgoing_trips, incoming_trips) %>%
+  group_by(station) %>% summarise(outgoing_trips=sum(outgoing_trips), incoming_trips=sum(incoming_trips))  %>% arrange(., desc(outgoing_trips), desc(incoming_trips)) -> trips.station
+# top 20
+trips.station %>% slice(1:20) -> trips.station
+# gather for plotting
+trips.station %>% gather("trip","count", 2:3) %>% arrange(., desc(count))-> trips.station 
+#plot
+ggplot(trips.station, aes(x=station, y=count, fill=trip)) +
+  geom_bar(stat="identity",color=I("black"), size=0,alpha = 0.5,width=0.8) +
+  xlab("Hour") +
+  ylab("Count") +
+  ggtitle("Number of trips (incoming/outgoing) per station") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+Now let's get more information of a single station (Government Center). During weekdays, the number of incoming trips are higher around 9 am and outgoing trips peak around 5 pm. This is an indication that people usually use the service for going to work. Weekends have a different pattern. Both days, but especially Sundays, have a significant number of trips from 00 to 02 am, which means some people rent bikes for going out or for other late-night entertainment activities.
+```{r, message=FALSE, warning=FALSE}
+# Lets check detail incoming outcoming for Government Center to see how the commute affects inbound and outbound trips
+# prepare outbound trips
+hw.trips %>% filter(strt_statn=="23") %>% select(strt_statn,start_date_weekday,start_date_time) %>% 
+  group_by(start_date_weekday, start_date_time) %>% summarise(count=n()) %>% as.data.frame()-> trips.ss.out
+trips.ss.out$start_date_time %>% substring(., 1, 2) %>% as.numeric() -> trips.ss.out$start_date_time
+trips.ss.out %>%  group_by(start_date_weekday, start_date_time) %>% summarise(count.out=sum(count)) %>% as.data.frame()-> trips.ss.out
+trips.ss.out %>% rename(weekday = start_date_weekday, hour=start_date_time)-> trips.ss.out
+# prepare inbound trips
+hw.trips %>% filter(end_statn=="23") %>% select(end_statn,end_date_weekday,end_date_time) %>% 
+  group_by(end_date_weekday, end_date_time) %>% summarise(count=n()) %>% as.data.frame()-> trips.ss.in
+trips.ss.in$end_date_time %>% substring(., 1, 2) %>% as.numeric() -> trips.ss.in$end_date_time
+trips.ss.in %>%  group_by(end_date_weekday, end_date_time) %>% summarise(count.in=sum(count)) %>% as.data.frame()-> trips.ss.in
+trips.ss.in %>% rename(weekday = end_date_weekday, hour=end_date_time) -> trips.ss.in
+# join in and out trips
+full_join(trips.ss.in, trips.ss.out, by = c("weekday","hour")) -> trips.ss
+trips.ss$count.in[is.na(trips.ss$count.in)] <- 0 #na to 0
+trips.ss$count.out[is.na(trips.ss$count.out)] <- 0 #na to 0
+# gather for plotting
+trips.ss %>% gather("trip","count", 3:4) %>% arrange(., desc(weekday))-> trips.ss
+# order weekdays for ploting
+trips.ss$weekday <-factor(trips.ss$weekday, levels = c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"))
+# plot
+ggplot(data =trips.ss,
+       mapping = aes(x = hour, y = count, shape = weekday, colour = trip, fill=trip)) +
+       geom_line(size=1,alpha = 0.5, aes(color=trip))+
+       ggtitle("Number of trips (incoming/outgoing) - Government Center") + 
+       facet_grid(facets = weekday ~ .) +
+       theme_bw()
+```
+
+#MAP ANALYSIS
+
+In this section we will help create a better idea of the data we have by visualizing maps.
+```{r, message=FALSE, warning=FALSE}
+hw.stations = read.csv("./data/hubway_stations_clean.csv")
+hw.trips = read.csv("./data/hubway_trips_clean.csv")
+```
+
+First, we look at stations by city. Boston is the city with the largest number of stations. Brookline, on the other hand, has the lowest.
+
+```{r, message=FALSE, warning=FALSE}
+# map of all stations by municipal
+ggmap(get_map("Boston, Massachusetts ",zoom=12,color = "bw")) +
+  geom_point(data=hw.stations, aes(x=lng,y=lat,fill = municipal), alpha = 0.7, size = 3, shape = 21) +
+  ggtitle("Stations by municipal")
+```
+
+Additionally, we can see if stations tend to have more incoming or outgoing trips.
+```{r, message=FALSE, warning=FALSE}
+# map stions with more outgoing/incoming trips
+hw.trips %>% group_by(strt_statn) %>% summarise(outgoing_trips=n()) %>% 
+  as.data.frame() %>% arrange(., desc(outgoing_trips)) %>% rename(id = strt_statn) -> trips.o
+hw.trips %>% group_by(end_statn) %>% summarise(incoming_trips=n()) %>%
+  as.data.frame() %>% arrange(., desc(incoming_trips)) %>% rename(id = end_statn) -> trips.i
+# merge by station and add station info from hw.stations
+full_join(trips.o, trips.i, by = "id") -> trips.station
+full_join(trips.station, hw.stations, by = "id") %>% select(id, station, municipal, lat, lng, status, incoming_trips,outgoing_trips)-> trips.station
+# get if the a station has more incoming or outgoing
+check <- function(x,y) {
+  if (x > y) {
+    result <- "incoming"
+  }
+  else if (x < y) {
+    result <- "outgoing"
+  }
+  else {
+    result <- "same"
+  }
+  return(result)
+}
+
+
+# apply funcition to get type of station
+mapply(FUN=check,trips.station$incoming_trips, trips.station$outgoing_trips) -> trips.station$type
+#plot
+ggmap(get_map("Boston, Massachusetts ",zoom=12,color = "bw")) +
+  geom_point(data=trips.station, aes(x=lng,y=lat,fill = type),alpha = 0.7, size = 3, shape = 21) +
+  ggtitle("Stations by trip flow (incoming/outgoing)") 
+
+```
+
+Finally, we split stations in quantiles based on the number of trips. We note with the help of the following graph that stations in the lower quantile are on the outskirts of the city, while stations in higher quantiles tend to be close to downtown.
+```{r, message=FALSE, warning=FALSE}
+# map staions with more traffic (4 quantiles)
+hw.trips %>% group_by(strt_statn) %>% summarise(outgoing_trips=n()) %>% 
+  as.data.frame() %>% arrange(., desc(outgoing_trips)) %>% rename(id = strt_statn) -> trips.o
+hw.trips %>% group_by(end_statn) %>% summarise(incoming_trips=n()) %>%
+  as.data.frame() %>% arrange(., desc(incoming_trips)) %>% rename(id = end_statn) -> trips.i
+# merge by station and add station info from hw.stations
+full_join(trips.o, trips.i, by = "id") -> trips.station
+full_join(trips.station, hw.stations, by = "id") %>% select(id, station, municipal, lat, lng, status, incoming_trips,outgoing_trips)-> trips.station
+# get if total number of trips
+trips.station %>% mutate(total_trips=incoming_trips + outgoing_trips) -> trips.station
+# get 4 quantiles:
+make.ntiles = function (inputvar, n) { 
+  inputvar %>%
+    quantile(., 
+             (1/n) * 1:(n-1),
+             na.rm=TRUE
+    ) %>%
+    c(-Inf, ., Inf) %>%
+    cut(inputvar, 
+        breaks=., 
+        paste("Q", 1:n, sep="")
+    ) 
+}
+trips.station %>%  mutate(trips.station_q4 = make.ntiles(total_trips, 4 ))-> trips.station
+trips.station$trips.station_q4 <- plyr::mapvalues(trips.station$trips.station_q4,
+                                              from = c("Q1","Q2","Q3","Q4"),
+                                              to = c("1.Low.quantile","2.Medium.low.quantile","3.Medium.high.quantile","4.High.quantile"))  
+#plot
+ggmap(get_map("Boston, Massachusetts ",zoom=12,color = "bw")) +
+  geom_point(data=trips.station, aes(x=lng,y=lat,fill = trips.station_q4),alpha = 0.7, size = 3, shape = 21) +
+  ggtitle("Total trips (4 quantiles)")  
+```
+
+This concludes the exploration of the data set. 
+
+###THE END
