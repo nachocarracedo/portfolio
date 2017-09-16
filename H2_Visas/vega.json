@@ -1,0 +1,328 @@
+{
+  "axes": [],
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        {
+          "x": "Texas",
+          "y": 5766
+        },
+        {
+          "x": "Kentucky",
+          "y": 5206
+        },
+        {
+          "x": "Louisiana",
+          "y": 5047
+        },
+        {
+          "x": "New York",
+          "y": 3718
+        },
+        {
+          "x": "Idaho",
+          "y": 2536
+        },
+        {
+          "x": "Florida",
+          "y": 2466
+        },
+        {
+          "x": "Colorado",
+          "y": 2332
+        },
+        {
+          "x": "Massachusetts",
+          "y": 2326
+        },
+        {
+          "x": "North Dakota",
+          "y": 2252
+        },
+        {
+          "x": "Pennsylvania",
+          "y": 1820
+        },
+        {
+          "x": "Tennessee",
+          "y": 1769
+        },
+        {
+          "x": "North Carolina",
+          "y": 1589
+        },
+        {
+          "x": "Virginia",
+          "y": 1484
+        },
+        {
+          "x": "Montana",
+          "y": 1456
+        },
+        {
+          "x": "California",
+          "y": 1400
+        },
+        {
+          "x": "New Jersey",
+          "y": 1285
+        },
+        {
+          "x": "Maryland",
+          "y": 1232
+        },
+        {
+          "x": "Utah",
+          "y": 1223
+        },
+        {
+          "x": "Ohio",
+          "y": 1199
+        },
+        {
+          "x": "South Dakota",
+          "y": 1180
+        },
+        {
+          "x": "Arkansas",
+          "y": 1153
+        },
+        {
+          "x": "Georgia",
+          "y": 1098
+        },
+        {
+          "x": "Maine",
+          "y": 1095
+        },
+        {
+          "x": "Missouri",
+          "y": 1042
+        },
+        {
+          "x": "Mississippi",
+          "y": 957
+        },
+        {
+          "x": "Oklahoma",
+          "y": 943
+        },
+        {
+          "x": "Kansas",
+          "y": 943
+        },
+        {
+          "x": "Michigan",
+          "y": 928
+        },
+        {
+          "x": "Minnesota",
+          "y": 803
+        },
+        {
+          "x": "South Carolina",
+          "y": 770
+        },
+        {
+          "x": "Wyoming",
+          "y": 700
+        },
+        {
+          "x": "Arizona",
+          "y": 663
+        },
+        {
+          "x": "Alabama",
+          "y": 590
+        },
+        {
+          "x": "Illinois",
+          "y": 575
+        },
+        {
+          "x": "Washington",
+          "y": 565
+        },
+        {
+          "x": "Vermont",
+          "y": 509
+        },
+        {
+          "x": "Connecticut",
+          "y": 508
+        },
+        {
+          "x": "Iowa",
+          "y": 444
+        },
+        {
+          "x": "New Hampshire",
+          "y": 406
+        },
+        {
+          "x": "Alaska",
+          "y": 397
+        },
+        {
+          "x": "Nebraska",
+          "y": 391
+        },
+        {
+          "x": "Nevada",
+          "y": 379
+        },
+        {
+          "x": "Indiana",
+          "y": 367
+        },
+        {
+          "x": "New Mexico",
+          "y": 237
+        },
+        {
+          "x": "Delaware",
+          "y": 225
+        },
+        {
+          "x": "Oregon",
+          "y": 202
+        },
+        {
+          "x": "Wisconsin",
+          "y": 201
+        },
+        {
+          "x": "Rhode Island",
+          "y": 128
+        },
+        {
+          "x": "West Virginia",
+          "y": 103
+        },
+        {
+          "x": "Hawaii",
+          "y": 60
+        },
+        {
+          "x": "District of Columbia",
+          "y": 38
+        },
+        {
+          "x": "Puerto Rico",
+          "y": 33
+        },
+        {
+          "x": "Northern Mariana Islands",
+          "y": 6
+        },
+        {
+          "x": "American Samoa",
+          "y": 2
+        },
+        {
+          "x": "Guam",
+          "y": 2
+        },
+        {
+          "x": "Virgin Islands",
+          "y": 1
+        }
+      ]
+    },
+    {
+      "format": {
+        "feature": "us_states.geo",
+        "type": "topojson"
+      },
+      "name": "states",
+      "transform": [
+        {
+          "as": "value",
+          "default": "noval",
+          "key": "data.properties.NAME",
+          "type": "zip",
+          "with": "table",
+          "withKey": "data.x"
+        },
+        {
+          "test": "d.path!='noval' && d.value!='noval'",
+          "type": "filter"
+        },
+        {
+          "projection": "albersUsa",
+          "scale": 1000,
+          "translate": [
+            480.0,
+            250.0
+          ],
+          "type": "geopath",
+          "value": "data"
+        }
+      ],
+      "url": "https://raw.githubusercontent.com/wrobstory/vincent_map_data/master/us_states.topo.json"
+    }
+  ],
+  "height": 500,
+  "legends": [
+    {
+      "fill": "color",
+      "offset": 0,
+      "properties": {},
+      "title": "Visa applications per US state"
+    }
+  ],
+  "marks": [
+    {
+      "from": {
+        "data": "states"
+      },
+      "properties": {
+        "enter": {
+          "path": {
+            "field": "path"
+          },
+          "stroke": {
+            "value": "#000000"
+          }
+        },
+        "update": {
+          "fill": {
+            "field": "value.data.y",
+            "scale": "color"
+          }
+        }
+      },
+      "type": "path"
+    }
+  ],
+  "padding": "auto",
+  "scales": [
+    {
+      "domain": [
+        0,
+        750,
+        1500,
+        2250,
+        3000,
+        3750,
+        4500,
+        5250
+      ],
+      "name": "color",
+      "range": [
+        "#f7fcf0",
+        "#e0f3db",
+        "#ccebc5",
+        "#a8ddb5",
+        "#7bccc4",
+        "#4eb3d3",
+        "#2b8cbe",
+        "#0868ac",
+        "#084081"
+      ],
+      "type": "threshold"
+    }
+  ],
+  "width": 960
+}
