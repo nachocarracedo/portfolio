@@ -1,6 +1,6 @@
 ## PORTFOLIO	
 
-These are some of the projects I've worked on, I decided to put them making them easy to browse:
+These are some of the projects I've worked on, I decided to put them all here making them easy to browse:
 
 * [**Machine learning tutorial classification**](https://github.com/nachocarracedo/portfolio/blob/master/ML_tutorial_python_classification/classification_tutorial.ipynb) [**MACHINE LEARNING**, **TUTORIAL**]<br>
 *Tutorial I made to show how an end to end machine learning classification project would look like (python).*
