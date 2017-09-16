@@ -12,7 +12,7 @@ These are some of the projects I've worked on, I decided to put them making them
 *Script that leverages twitter API to generate a visualization of your twitter account (python)*
 * [**Twitter alert**](https://github.com/nachocarracedo/twitter_alert) [**CODING**]<br>
 *Script that scans twitter accounts for keywords. If any of the keywords are found, the program will send an email alerting the user (python)*
-* [**H2 Visas data set: Answering questions**](https://github.com/nachocarracedo/h2_visas/h2_visas_analysis.ipynb) [**EDA**,**DATA CLEANING**]<br>
+* [**H2 Visas data set: Answering questions**](https://github.com/nachocarracedo/portfolio/blob/master/H2_Visas/h2_visas_analysis.ipynb) [**EDA**,**DATA CLEANING**]<br>
 *Python notebook that cleans and explores the H2 Visas data set.*
 * [** **]() []<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**
