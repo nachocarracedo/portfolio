@@ -15,15 +15,15 @@ These are some of the projects I've worked on, I decided to put them all here ma
 * [**H2 Visas data set: Answering questions**](https://github.com/nachocarracedo/portfolio/blob/master/H2_Visas/h2_visas_analysis.ipynb) [**EDA**,**DATA CLEANING**]<br>
 *Python notebook that cleans and explores the H2 Visas data set.*
 * [**Lending Club - Predicting loans default**](https://github.com/nachocarracedo/Lending_Club/blob/master/lending_club_v2.ipynb) [**MACHINE LEARNING**]<br>
-*Python notebook that works with the Lending Club data set and predicts if a loan will be paid.
-* [**Tensor Flow Tutorial - CNNs**]() []<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**	
+*Python notebook that works with the Lending Club data set and predicts if a loan will be paid*
+* [**Tensor Flow Tutorial - CNNs**](https://github.com/nachocarracedo/tensor_flow/blob/master/CNN_MNIST_example.ipynb) [**MACHINE LEARNING**, **TUTORIAL**]<br>
+*Tutorial I made to show how to build a CNN with Tensor Flow*
 * [**Time Series examples**]() []<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**
+..
 * [**R tutorials**]() []<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**
 * [**Home Depot Kaggle**]() []<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**	
+..
 * [**Design of experiments**]() []<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**	
+..
 	
