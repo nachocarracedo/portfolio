@@ -6,67 +6,67 @@
       "values": [
         {
           "x": "North Carolina",
-          "y": 7974
+          "y": 7978
         },
         {
           "x": "Texas",
-          "y": 3828
+          "y": 3787
         },
         {
           "x": "Virginia",
-          "y": 3158
+          "y": 3275
         },
         {
           "x": "New York",
-          "y": 2272
+          "y": 2281
         },
         {
           "x": "Louisiana",
-          "y": 2023
+          "y": 1939
         },
         {
           "x": "Florida",
-          "y": 1766
-        },
-        {
-          "x": "California",
-          "y": 1694
+          "y": 1750
         },
         {
           "x": "Massachusetts",
-          "y": 1675
+          "y": 1617
+        },
+        {
+          "x": "California",
+          "y": 1532
         },
         {
           "x": "Pennsylvania",
-          "y": 1482
+          "y": 1530
         },
         {
           "x": "Colorado",
-          "y": 1392
-        },
-        {
-          "x": "Arizona",
-          "y": 1096
-        },
-        {
-          "x": "New Jersey",
-          "y": 1081
-        },
-        {
-          "x": "Ohio",
-          "y": 954
-        },
-        {
-          "x": "Maryland",
-          "y": 943
-        },
-        {
-          "x": "Kentucky",
-          "y": 927
+          "y": 1522
         },
         {
           "x": "Washington",
-          "y": 913
+          "y": 1156
+        },
+        {
+          "x": "New Jersey",
+          "y": 1141
+        },
+        {
+          "x": "Maryland",
+          "y": 1110
+        },
+        {
+          "x": "Idaho",
+          "y": 1016
+        },
+        {
+          "x": "Ohio",
+          "y": 979
+        },
+        {
+          "x": "Kentucky",
+          "y": 936
         },
         {
           "x": "Missouri",
@@ -74,155 +74,147 @@
         },
         {
           "x": "Michigan",
-          "y": 760
-        },
-        {
-          "x": "Maine",
-          "y": 749
+          "y": 773
         },
         {
           "x": "Utah",
-          "y": 734
+          "y": 718
+        },
+        {
+          "x": "Maine",
+          "y": 708
         },
         {
           "x": "North Dakota",
-          "y": 696
-        },
-        {
-          "x": "Idaho",
-          "y": 657
+          "y": 646
         },
         {
           "x": "Oklahoma",
-          "y": 579
+          "y": 576
         },
         {
           "x": "South Dakota",
-          "y": 539
+          "y": 571
         },
         {
           "x": "Arkansas",
-          "y": 529
-        },
-        {
-          "x": "South Carolina",
-          "y": 529
-        },
-        {
-          "x": "Mississippi",
-          "y": 510
-        },
-        {
-          "x": "Georgia",
-          "y": 455
+          "y": 550
         },
         {
           "x": "Montana",
-          "y": 440
+          "y": 515
         },
         {
-          "x": "Tennessee",
-          "y": 423
+          "x": "Georgia",
+          "y": 476
         },
         {
-          "x": "Alabama",
-          "y": 412
+          "x": "Mississippi",
+          "y": 474
         },
         {
-          "x": "Minnesota",
-          "y": 392
+          "x": "South Carolina",
+          "y": 464
         },
         {
-          "x": "Alaska",
-          "y": 391
-        },
-        {
-          "x": "Illinois",
-          "y": 381
-        },
-        {
-          "x": "Wyoming",
-          "y": 309
+          "x": "Arizona",
+          "y": 455
         },
         {
           "x": "Kansas",
-          "y": 305
+          "y": 428
         },
         {
-          "x": "Indiana",
-          "y": 238
-        },
-        {
-          "x": "Connecticut",
-          "y": 205
+          "x": "Tennessee",
+          "y": 417
         },
         {
           "x": "Nevada",
-          "y": 203
+          "y": 414
         },
         {
-          "x": "Delaware",
-          "y": 202
+          "x": "Alabama",
+          "y": 403
         },
         {
-          "x": "New Hampshire",
-          "y": 187
+          "x": "Minnesota",
+          "y": 402
         },
         {
-          "x": "Nebraska",
-          "y": 182
+          "x": "Illinois",
+          "y": 393
+        },
+        {
+          "x": "Wyoming",
+          "y": 381
         },
         {
           "x": "Oregon",
-          "y": 181
+          "y": 321
+        },
+        {
+          "x": "Nebraska",
+          "y": 268
+        },
+        {
+          "x": "Indiana",
+          "y": 216
+        },
+        {
+          "x": "New Hampshire",
+          "y": 204
+        },
+        {
+          "x": "Connecticut",
+          "y": 199
         },
         {
           "x": "Vermont",
-          "y": 176
+          "y": 180
         },
         {
           "x": "Iowa",
-          "y": 162
+          "y": 168
+        },
+        {
+          "x": "Delaware",
+          "y": 153
+        },
+        {
+          "x": "Alaska",
+          "y": 141
         },
         {
           "x": "Wisconsin",
-          "y": 115
+          "y": 117
         },
         {
           "x": "Rhode Island",
-          "y": 101
-        },
-        {
-          "x": "New Mexico",
-          "y": 89
+          "y": 102
         },
         {
           "x": "West Virginia",
-          "y": 88
+          "y": 76
         },
         {
-          "x": "District of Columbia",
-          "y": 30
-        },
-        {
-          "x": "Puerto Rico",
-          "y": 19
+          "x": "New Mexico",
+          "y": 69
         },
         {
           "x": "Hawaii",
-          "y": 14
+          "y": 12
+        },
+        {
+          "x": "Puerto Rico",
+          "y": 11
+        },
+        {
+          "x": "District of Columbia",
+          "y": 4
         },
         {
           "x": "Northern Mariana Islands",
-          "y": 2
-        },
-        {
-          "x": "American Samoa",
-          "y": 2
-        },
-        {
-          "x": "Virgin Islands",
-          "y": 1
+          "y": 3
         },
         {
           "x": "Guam",
