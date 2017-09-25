@@ -1,17 +1,24 @@
-# h2_visas
+# H2 VISAS
 
-The goal of this notebook (h2_visas_analysis.ipynb) is to explore the H2 Visas data set.
+This [notebook](https://github.com/nachocarracedo/portfolio/blob/master/H2_Visas/h2_visas_analysis.ipynb) explores the dataset of H2 visa applications (https://github.com/BuzzFeedNews/H-2-certification-data#standardized-data). 
 
-**Data**
+The U.S. Department of Labor releases this data as Excel (.XLS) files and BuzzFeed News has been tracking and hosting these datasets on Github. The dataset has data from fiscal year 2000 till 2016, this notebook will only take into account the data from fiscal year 2010 to 2016 (which only goes to March 31st)
 
-The analyses below depend on two major datasets from the Department of Labor, the agency responsible for protecting workers and vetting employers seeking visas:
+There are 2 types of H2 Visas:
 
-* The Wage and Hour Division's WHISARD database, obtained via a Freedom of Information Act request. The database contains information on employers, violations, fines, and other details corresponding to investigations concluded between October 1, 2001 and March 31, 2015. (Note: The WHD has redacted some tables and columns per FOIA exemption 5.) You can download a copy of the data dictionary here. To decompress the data file, run make data/whd-enforcement-database from this repository's root directory. Once you do so, the data can be found in data/whd-enforcement-database.
+* [H2-A](https://www.uscis.gov/working-united-states/temporary-workers/h-2a-temporary-agricultural-workers): Allows foreign agricultural workers with a job offer for seasonal agricultural work in the US 
 
-* The Office of Foreign Labor Certification's records of visa-certification decisions for the H-2 visa program. (The visa comes in two types: H-2A for agricultural workers and H-2B for non-agricultural unskilled workers.) Obtained from here and here. The raw and processed data can be found in data/oflc-decisions.
+* [H2-B](https://www.uscis.gov/working-united-states/temporary-workers/h-2b-temporary-non-agricultural-workers): Allows U.S. employers or U.S. agents who meet specific regulatory requirements to bring foreign nationals to the United States to fill temporary nonagricultural jobs
 
-Main questions I wanted to answer:
-* How application status have change over time
-* How has the number of approved workers changed over time?
-* How has the number of approved workers changed over time?
-* Which states request the most visas and how has this changed over time?
+After cleaning the data this [notebook](https://github.com/nachocarracedo/portfolio/blob/master/H2_Visas/h2_visas_analysis.ipynb) tries to answer the following questions:
+
+* 1 How application status have change over time?
+* 2 How have the number of approved workers has changed  over time? and the number of employers?
+* 3 Which states request the most visas and how has this changed over time?
+* 4 Number of approved Visas per state in 2015 
+
+Here are some outputs from the [notebook](https://github.com/nachocarracedo/portfolio/blob/master/H2_Visas/h2_visas_analysis.ipynb) that help answer the following questions:
+
+![Alt text](/viz_example.png?raw=true)
+
+To check the code and see the data cleaning process you can check this [notebook](https://github.com/nachocarracedo/portfolio/blob/master/H2_Visas/h2_visas_analysis.ipynb)
