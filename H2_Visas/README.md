@@ -1,8 +1,6 @@
 # H2 VISAS
 
-This [notebook](https://github.com/nachocarracedo/portfolio/blob/master/H2_Visas/h2_visas_analysis.ipynb) explores the [dataset](https://github.com/BuzzFeedNews/H-2-certification-data#standardized-data) of H2 visa applications. 
-
-The U.S. Department of Labor releases this data as Excel (.XLS) files and BuzzFeed News has been tracking and hosting these datasets on Github. The dataset has data from fiscal year 2000 till 2016, this notebook will only take into account the data from fiscal year 2010 to 2016 (which only goes to March 31st)
+This [notebook](https://github.com/nachocarracedo/portfolio/blob/master/H2_Visas/h2_visas_analysis.ipynb) explores the [dataset](https://github.com/BuzzFeedNews/H-2-certification-data#standardized-data) of H2 visa applications. The U.S. Department of Labor releases this data as Excel (.XLS) files and BuzzFeed News has been tracking and hosting these datasets on Github. 
 
 There are 2 types of H2 Visas:
 
