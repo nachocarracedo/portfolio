@@ -23,8 +23,8 @@ These are some of the projects and presentations (tutorials) I've worked on. Fin
 * [**Lending Club - Predicting loans default**](https://github.com/nachocarracedo/Lending_Club/blob/master/lending_club_v2.ipynb) [**MACHINE LEARNING**]<br>
 *Python notebook that works with the Lending Club data set and predicts if a loan will be paid (python)*
 
-* [**Visualizations for work**](https://github.com/nachocarracedo/Visualizations) [**VISUALIZATION**]<br>
-*Here I show some visualizations I made for some projects I was involved with at work. These were requested by project managers/stakeholders*
+* [**Visualizations (as a Systems Engineer)**](https://github.com/nachocarracedo/Visualizations) [**VISUALIZATION**]<br>
+*Here I show some visualizations I made for some projects I was involved with at work (DELLEMC Systems Engineer). These were requested by project managers/stakeholders*
 
 * [**Tensor Flow Tutorial - CNNs**](https://github.com/nachocarracedo/tensor_flow/blob/master/CNN_MNIST_example.ipynb) [**MACHINE LEARNING**, **TUTORIAL**]<br>
 *Tutorial I made to show how to build a CNN with Tensor Flow (python)*
