@@ -33,5 +33,3 @@ These are some of the projects and presentations (tutorials) I've worked on. Fin
 ... This is still a work in progress. I'm currently cleaning/commenting other projects that I'll add shortly
 
 
-	
-LN5Rjtdn
