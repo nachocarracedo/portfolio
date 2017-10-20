@@ -15,7 +15,7 @@ After cleaning the data this [notebook](https://github.com/nachocarracedo/portfo
 * 3 Which states request the most visas and how has this changed over time?
 * 4 Number of approved Visas per state in 2015 
 
-Here are some outputs from the [notebook](https://github.com/nachocarracedo/portfolio/blob/master/H2_Visas/h2_visas_analysis.ipynb) that help answer the following questions:
+Here are all visualizations from the [notebook](https://github.com/nachocarracedo/portfolio/blob/master/H2_Visas/h2_visas_analysis.ipynb) put together that answer the previous questions:
 
 ![Alt text](https://github.com/nachocarracedo/portfolio/blob/master/H2_Visas/viz_example.png?raw=true)
 
