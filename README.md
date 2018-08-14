@@ -2,6 +2,9 @@
 
 These are some of the projects and presentations (tutorials) I've worked on. Find links and topics here:
 
+* [**Bespoke project [Coming 08/16/18...]**](https://github.com/nachocarracedo/buysell/) [**PYTHON**]<br>
+*Project that scans local craiglist listings and match them to ebay/amazon products to find where the biggest price marging is
+
 * [**Machine learning tutorial classification**](https://github.com/nachocarracedo/portfolio/blob/master/ML_tutorial_python_classification/classification_tutorial.ipynb) [**MACHINE LEARNING**, **TUTORIAL**]<br>
 *Tutorial I made to show how an end to end machine learning classification project would look like (python)*
 
@@ -17,7 +20,7 @@ These are some of the projects and presentations (tutorials) I've worked on. Fin
 * [**H2 Visas data set: Clean and Explore**](https://github.com/nachocarracedo/portfolio/tree/master/H2_Visas)[**EDA**, **DATA CLEANING**]<br>
 *Python notebook that cleans and explores the H2 Visas data set (python)*
 
-* [**Twitter alert**](https://github.com/nachocarracedo/twitter_alert) [**CODING**]<br>
+* [**Twitter alert**](https://github.com/nachocarracedo/twitter_alert) [**PYTHON**]<br>
 *Script that scans twitter accounts for keywords. If any of the keywords are found, the program will send an email alerting the user (python)*
 
 * [**Lending Club - Predicting loans default**](https://github.com/nachocarracedo/Lending_Club/blob/master/lending_club_v2.ipynb) [**MACHINE LEARNING**]<br>
