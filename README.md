@@ -3,7 +3,7 @@
 These are some of the projects and presentations (tutorials) I've worked on. Find links and topics here:
 
 * [**Craigslist project [In progress...]**](https://github.com/nachocarracedo/craigslist_scan) [**PYTHON**]<br>
-*Project that scans local craigslist listings and match them to ebay/amazon products to find where the biggest price marging is. Results are sent via email or presented via webapp (django)*
+*Project that scans local craigslist listings and match them to ebay/amazon products to find where the biggest price margin is. Results are stored on sql db and sent via email or presented via webapp (django)*
 
 * [**Machine learning tutorial classification**](https://github.com/nachocarracedo/portfolio/blob/master/ML_tutorial_python_classification/classification_tutorial.ipynb) [**MACHINE LEARNING**, **TUTORIAL**]<br>
 *Tutorial I made to show how an end to end machine learning classification project would look like (python)*
